@@ -1,0 +1,83 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yorgen Fenech Trial Archive - Integrated Prototype</title>
+<style>
+body{margin:0;font-family:Segoe UI,Arial;background:#f5f3ee;color:#132033}
+header{background:#1b2332;color:#fff;padding:24px}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+nav button{padding:10px 14px;border:0;border-radius:8px;cursor:pointer}
+.wrap{max-width:1200px;margin:auto;padding:20px}
+.panel{display:none;background:#fff;border-radius:12px;padding:20px;box-shadow:0 4px 10px rgba(0,0,0,.08)}
+.panel.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.card{background:#fafafa;border:1px solid #ddd;border-radius:10px;padding:14px}
+input{width:100%;padding:10px}
+</style>
+</head>
+<body>
+<header>
+<h1>Yorgen Fenech Trial Archive</h1>
+<p>Integrated Prototype (Modules 1–11)</p>
+<nav id="nav"></nav>
+</header>
+
+<div class="wrap">
+<section id="m1" class="panel active">
+<h2>Dashboard</h2>
+<div class="grid">
+<div class="card"><b>26</b><br>Court Days</div>
+<div class="card"><b>15</b><br>People</div>
+<div class="card"><b>60+</b><br>Witnesses</div>
+<div class="card"><b>150+</b><br>Evidence</div>
+</div>
+</section>
+
+<section id="m2" class="panel">
+<h2>Timeline Explorer</h2>
+<input placeholder="Search timeline (prototype)">
+<p>Connects to the day-by-day timeline in future versions.</p>
+</section>
+
+<section id="m3" class="panel">
+<h2>People Directory</h2>
+<ul>
+<li>Yorgen Fenech</li>
+<li>Keith Schembri</li>
+<li>Melvin Theuma</li>
+<li>Keith Arnaud</li>
+<li>Johann Cremona</li>
+</ul>
+</section>
+
+<section id="m4" class="panel"><h2>Witness Archive</h2><p>Searchable witness database (prototype).</p></section>
+<section id="m5" class="panel"><h2>Evidence Library</h2><p>Evidence catalogue (prototype).</p></section>
+<section id="m6" class="panel"><h2>Quote Explorer</h2><p>Searchable quotation archive (prototype).</p></section>
+<section id="m7" class="panel"><h2>Relationship Graph</h2><p>Interactive graph will be embedded here.</p></section>
+<section id="m8" class="panel"><h2>Statistics</h2><p>Analytics dashboard.</p></section>
+<section id="m9" class="panel"><h2>Data Engine</h2><p>JSON browser and validation.</p></section>
+<section id="m10" class="panel"><h2>Updater</h2><p>Status of automatic updates.</p></section>
+<section id="m11" class="panel"><h2>Administration</h2><p>Maintenance and export tools.</p></section>
+</div>
+
+<script>
+const mods=[
+["m1","Dashboard"],["m2","Timeline"],["m3","People"],["m4","Witnesses"],
+["m5","Evidence"],["m6","Quotes"],["m7","Graph"],["m8","Statistics"],
+["m9","Data"],["m10","Updater"],["m11","Admin"]];
+const nav=document.getElementById("nav");
+mods.forEach(([id,name])=>{
+ const b=document.createElement("button");
+ b.textContent=name;
+ b.onclick=()=>{
+   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+   document.getElementById(id).classList.add("active");
+ };
+ nav.appendChild(b);
+});
+</script>
+</body>
+</html>
