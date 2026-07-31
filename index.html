@@ -1,83 +1,282 @@
-
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Yorgen Fenech Trial Archive - Integrated Prototype</title>
+<title>Yorgen Fenech Trial — MaltaToday Daily Timeline</title>
 <style>
-body{margin:0;font-family:Segoe UI,Arial;background:#f5f3ee;color:#132033}
-header{background:#1b2332;color:#fff;padding:24px}
-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-nav button{padding:10px 14px;border:0;border-radius:8px;cursor:pointer}
-.wrap{max-width:1200px;margin:auto;padding:20px}
-.panel{display:none;background:#fff;border-radius:12px;padding:20px;box-shadow:0 4px 10px rgba(0,0,0,.08)}
-.panel.active{display:block}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.card{background:#fafafa;border:1px solid #ddd;border-radius:10px;padding:14px}
-input{width:100%;padding:10px}
+:root{--ink:#132033;--muted:#64748b;--paper:#f5f3ee;--card:#fff;--accent:#9e1b32;--line:#ddd6ca;--dark:#111827}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--paper);color:var(--ink)}
+header{background:linear-gradient(135deg,#111827,#2d1720);color:white;padding:52px 20px 38px}
+.wrap{max-width:1120px;margin:auto} .eyebrow{text-transform:uppercase;letter-spacing:.15em;font-size:.78rem;color:#e7b7bf;font-weight:700}
+h1{font-family:Georgia,serif;font-size:clamp(2.25rem,6vw,4.7rem);line-height:.98;margin:.55rem 0 1rem;max-width:900px}
+.lead{font-size:1.08rem;line-height:1.6;max-width:850px;color:#e5e7eb}
+.notice{margin-top:22px;padding:14px 16px;border:1px solid #6b3a43;border-radius:12px;background:#ffffff10;font-size:.91rem;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:26px;max-width:650px}
+.stat{background:#ffffff0d;border:1px solid #ffffff24;border-radius:12px;padding:14px} .stat b{display:block;font-size:1.55rem}
+.controls{position:sticky;top:0;z-index:20;background:#f5f3eef2;backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 20px}
+.control-grid{max-width:1120px;margin:auto;display:grid;grid-template-columns:1fr 260px;gap:12px}
+input,select{width:100%;padding:13px 14px;border:1px solid #cfc7bb;border-radius:10px;background:white;font-size:1rem}
+main{padding:32px 20px 60px} .section-title{font-family:Georgia,serif;font-size:2rem;margin:0 0 6px} .section-sub{color:var(--muted);margin:0 0 24px}
+.timeline{position:relative} .timeline:before{content:"";position:absolute;left:32px;top:0;bottom:0;width:2px;background:var(--line)}
+.card{position:relative;margin:0 0 18px 72px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 4px 20px #1f293708}
+.card:before{content:"";position:absolute;left:-48px;top:25px;width:14px;height:14px;border-radius:50%;background:var(--accent);border:5px solid var(--paper)}
+.dayrow{display:flex;gap:14px;justify-content:space-between;align-items:flex-start} .daynum{font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;font-size:.78rem}
+.date{font-size:.9rem;color:var(--muted)} h2{font-family:Georgia,serif;font-size:1.5rem;margin:7px 0 10px}
+.summary{line-height:1.65;margin:0;color:#334155} .tags{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0}
+.tag{font-size:.76rem;background:#f1ece5;border:1px solid #e0d8cd;border-radius:999px;padding:5px 9px;color:#5b463d}
+.source{display:inline-block;color:var(--accent);font-weight:700;text-decoration:none;margin-top:3px} .source:hover{text-decoration:underline}
+.empty{background:white;border:1px solid var(--line);padding:30px;border-radius:14px;text-align:center;color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:28px 20px 45px;color:var(--muted);font-size:.9rem;line-height:1.6}
+@media(max-width:700px){.stats{grid-template-columns:1fr}.control-grid{grid-template-columns:1fr}.timeline:before{left:11px}.card{margin-left:34px;padding:18px}.card:before{left:-31px}}
+@media print{.controls{display:none} header{background:white;color:black;padding:20px}.lead,.eyebrow{color:#333}.notice{border-color:#aaa}.card{break-inside:avoid;box-shadow:none}}
+
+/* Interactive people network */
+.network-shell{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin:0 0 38px;box-shadow:0 5px 24px #1f29370a}
+.network-toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.network-toolbar .hint{color:var(--muted);font-size:.9rem;line-height:1.45;max-width:690px}
+.network-actions{display:flex;gap:8px;flex-wrap:wrap}
+.network-actions button{border:1px solid #cfc7bb;background:#fff;border-radius:9px;padding:9px 11px;cursor:pointer;font-weight:700;color:#374151}
+.network-actions button:hover{background:#f5f3ee}
+.network-stage{position:relative;min-height:680px;border-radius:14px;overflow:hidden;background:
+radial-gradient(circle at 50% 45%,#fff 0,#fbfaf7 48%,#f1eee7 100%);border:1px solid #e5dfd5}
+#networkSvg{display:block;width:100%;height:680px;touch-action:none}
+.net-edge{cursor:pointer;transition:opacity .2s,stroke-width .2s}
+.net-edge:hover{opacity:1!important}
+.net-node{cursor:pointer}
+.net-node circle{filter:drop-shadow(0 3px 4px #0002);transition:r .16s,stroke-width .16s}
+.net-node:hover circle,.net-node.active circle{stroke-width:5}
+.net-node text{font-size:12px;font-weight:800;paint-order:stroke;stroke:white;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.network-detail{position:absolute;right:16px;top:16px;width:min(350px,calc(100% - 32px));background:#fffffff3;backdrop-filter:blur(9px);border:1px solid #d8d1c6;border-radius:13px;padding:15px;box-shadow:0 10px 34px #11182724;z-index:5}
+.network-detail h4{font-family:Georgia,serif;font-size:1.25rem;margin:0 0 6px}
+.network-detail p{margin:6px 0;color:#475569;line-height:1.48;font-size:.9rem}
+.network-detail .role{font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:800}
+.network-detail .close{float:right;border:0;background:transparent;font-size:1.15rem;cursor:pointer;color:#64748b}
+.legend{display:flex;flex-wrap:wrap;gap:12px 18px;margin:14px 2px 2px;color:#475569;font-size:.84rem}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{display:inline-block;width:35px;border-top-style:solid}
+.legend .g1{border-color:#08783e;border-top-width:6px}.legend .g2{border-color:#60a876;border-top-width:3px}
+.legend .r1{border-color:#b3152b;border-top-width:6px}.legend .r2{border-color:#dc7b87;border-top-width:3px}
+.legend .n1{border-color:#7b8794;border-top-width:2px;border-top-style:dashed}
+.people-index{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:18px}
+.person-chip{border:1px solid #ded7cc;background:#fff;border-radius:12px;padding:11px 12px;cursor:pointer;text-align:left}
+.person-chip:hover{border-color:#9e1b32;background:#fffafb}.person-chip b{display:block}.person-chip small{color:var(--muted)}
+.map-note{font-size:.86rem;line-height:1.55;color:#64748b;background:#f8f6f1;border-left:4px solid #9e1b32;padding:11px 13px;margin:12px 0 18px}
+@media(max-width:700px){#networkSvg{height:620px}.network-stage{min-height:620px}.network-detail{position:absolute;top:auto;bottom:12px;right:12px;left:12px;width:auto}.network-actions{width:100%}}
+@media print{.network-actions{display:none}.network-stage{break-inside:avoid}}
+
 </style>
 </head>
 <body>
 <header>
-<h1>Yorgen Fenech Trial Archive</h1>
-<p>Integrated Prototype (Modules 1–11)</p>
-<nav id="nav"></nav>
-</header>
-
 <div class="wrap">
-<section id="m1" class="panel active">
-<h2>Dashboard</h2>
-<div class="grid">
-<div class="card"><b>26</b><br>Court Days</div>
-<div class="card"><b>15</b><br>People</div>
-<div class="card"><b>60+</b><br>Witnesses</div>
-<div class="card"><b>150+</b><br>Evidence</div>
+<div class="eyebrow">Independent reading guide · MaltaToday coverage only</div>
+<h1>Yorgen Fenech Jury Trial</h1>
+<p class="lead">A day-by-day timeline and interactive people map based on MaltaToday’s live reporting from the opening of the trial on 1 July 2026 through Day 26 on 30 July 2026.</p>
+<div class="notice"><strong>Important:</strong> This is a journalistic timeline, not a judicial finding. Allegations, testimony and denials are attributed and should not be read as established guilt. Yorgen Fenech has pleaded not guilty. Summaries are original paraphrases; use the source links for MaltaToday’s full reports.</div>
+<div class="stats"><div class="stat"><b>26</b>court sittings</div><div class="stat"><b>1–30 July</b>coverage period</div><div class="stat"><b>15</b>named people mapped</div></div>
+</div>
+</header>
+<div class="controls"><div class="control-grid">
+<input id="search" placeholder="Search people, evidence or events…">
+<select id="filter"><option value="">All topics and witnesses</option></select>
+</div></div>
+<main class="wrap">
+<h3 class="section-title">Daily proceedings</h3>
+<p class="section-sub">Search the archive or filter it by a recurring person or topic.</p>
+
+<section id="people-network">
+<h3 class="section-title">People and reported relationships</h3>
+<p class="section-sub">Select a person or connection to see their role, relationship and relevant trial days.</p>
+<div class="map-note"><strong>How to read this:</strong> Green indicates reported closeness, cooperation or association—not approval or innocence. Red indicates conflict, accusation, alleged harm or adverse testimony. Grey dashed lines indicate official or investigative contact. Thickness reflects how strongly or repeatedly the link appeared in the MaltaToday timeline. Some links are allegations or witness accounts and remain contested.</div>
+<div class="network-shell">
+  <div class="network-toolbar">
+    <div class="hint">Drag people to rearrange the map. Click a person to highlight all of their links. Click a line for the exact relationship description.</div>
+    <div class="network-actions">
+      <button id="resetNetwork" type="button">Reset map</button>
+      <button id="showAllNetwork" type="button">Show all links</button>
+    </div>
+  </div>
+  <div class="network-stage">
+    <svg id="networkSvg" viewBox="0 0 1080 680" role="img" aria-label="Interactive relationship network of people appearing in MaltaToday trial coverage"></svg>
+    <aside id="networkDetail" class="network-detail">
+      <button class="close" id="closeDetail" aria-label="Close">×</button>
+      <div class="role">Interactive map</div>
+      <h4>Select a person or line</h4>
+      <p>The panel will explain the reported relationship and identify the most relevant trial days.</p>
+    </aside>
+  </div>
+  <div class="legend">
+    <span><i class="g1"></i>Strong closeness/association</span>
+    <span><i class="g2"></i>Weaker association</span>
+    <span><i class="r1"></i>Strong conflict/adverse link</span>
+    <span><i class="r2"></i>Weaker or contested adverse link</span>
+    <span><i class="n1"></i>Official/investigative contact</span>
+  </div>
+  <div id="peopleIndex" class="people-index"></div>
 </div>
 </section>
 
-<section id="m2" class="panel">
-<h2>Timeline Explorer</h2>
-<input placeholder="Search timeline (prototype)">
-<p>Connects to the day-by-day timeline in future versions.</p>
-</section>
-
-<section id="m3" class="panel">
-<h2>People Directory</h2>
-<ul>
-<li>Yorgen Fenech</li>
-<li>Keith Schembri</li>
-<li>Melvin Theuma</li>
-<li>Keith Arnaud</li>
-<li>Johann Cremona</li>
-</ul>
-</section>
-
-<section id="m4" class="panel"><h2>Witness Archive</h2><p>Searchable witness database (prototype).</p></section>
-<section id="m5" class="panel"><h2>Evidence Library</h2><p>Evidence catalogue (prototype).</p></section>
-<section id="m6" class="panel"><h2>Quote Explorer</h2><p>Searchable quotation archive (prototype).</p></section>
-<section id="m7" class="panel"><h2>Relationship Graph</h2><p>Interactive graph will be embedded here.</p></section>
-<section id="m8" class="panel"><h2>Statistics</h2><p>Analytics dashboard.</p></section>
-<section id="m9" class="panel"><h2>Data Engine</h2><p>JSON browser and validation.</p></section>
-<section id="m10" class="panel"><h2>Updater</h2><p>Status of automatic updates.</p></section>
-<section id="m11" class="panel"><h2>Administration</h2><p>Maintenance and export tools.</p></section>
-</div>
-
+<div id="timeline" class="timeline"></div>
+</main>
+<footer><div class="wrap">
+<strong>Source scope:</strong> MaltaToday’s daily court reports only. This website does not reproduce MaltaToday articles or photographs. It provides concise summaries and links to the original coverage. Last included sitting: Day 26, 30 July 2026.
+</div></footer>
 <script>
-const mods=[
-["m1","Dashboard"],["m2","Timeline"],["m3","People"],["m4","Witnesses"],
-["m5","Evidence"],["m6","Quotes"],["m7","Graph"],["m8","Statistics"],
-["m9","Data"],["m10","Updater"],["m11","Admin"]];
-const nav=document.getElementById("nav");
-mods.forEach(([id,name])=>{
- const b=document.createElement("button");
- b.textContent=name;
- b.onclick=()=>{
-   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
-   document.getElementById(id).classList.add("active");
- };
- nav.appendChild(b);
-});
+const days=[{"day": 1, "date": "1 July 2026", "title": "Jury selected and indictment read", "tags": ["Procedure"], "summary": "A nine-member jury and six reserve jurors were selected after a lengthy closed-door process. The bill of indictment was formally read and Yorgen Fenech maintained his not-guilty plea to charges connected with the assassination of Daphne Caruana Galizia.", "url": "https://www.maltatoday.com.mt/news/court_and_police/142924/yorgen_fenech_trial_over_murder_of_journalist_daphne_caruana_galizia_set_to_begin"}, {"day": 2, "date": "2 July 2026", "title": "Prosecution sets out its alleged murder plot", "tags": ["Prosecution", "Opening"], "summary": "The prosecution delivered its opening address, presenting its case that Fenech financed and directed the assassination through middleman Melvin Theuma and the convicted hitmen. The defence continued to contest the allegations.", "url": "https://www.maltatoday.com.mt/news/court_and_police/142931/stage_set_for_prosecution_as_yorgen_fenech_trial_enters_second_day1"}, {"day": 3, "date": "3 July 2026", "title": "Keith Arnaud reconstructs the murder investigation", "tags": ["Keith Arnaud", "Police"], "summary": "Lead investigator Keith Arnaud began taking jurors from the immediate aftermath of the 2017 bombing through the phone-data investigation, the early dead ends and the eventual focus on Melvin Theuma.", "url": "https://www.maltatoday.com.mt/news/court_and_police/142953/witness_testimony_set_to_begin_as_third_day_of_yorgen_fenech_trial_underway_1"}, {"day": 4, "date": "4 July 2026", "title": "Theuma recordings and post-arrest investigation", "tags": ["Keith Arnaud", "Melvin Theuma", "Digital evidence"], "summary": "Arnaud continued describing the fast-moving investigation after Fenech’s arrest, including secret recordings, urgent Europol extraction of electronic devices and documents linked to doctor Adrian Vella and Keith Schembri.", "url": "https://www.maltatoday.com.mt/news/court_and_police/142973/yorgen_fenech_jury_lead_investigator_keith_arnaud_to_continue_testifying11"}, {"day": 5, "date": "6 July 2026", "title": "Fenech’s police version examined", "tags": ["Keith Arnaud", "Yorgen Fenech", "Police statements"], "summary": "Arnaud recounted Fenech’s explanations to police about the planned boat trip, payments and the assassination. The court heard that investigators considered the secret recordings inconsistent with the claim that money was intended to stop the murder.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143002/yorgen_fenech_murder_trial_assistant_police_commissioner_keith_arnaud_to_continue_testifying"}, {"day": 6, "date": "7 July 2026", "title": "Defence turns attention toward Keith Schembri", "tags": ["Cross-examination", "Keith Schembri", "Keith Arnaud"], "summary": "During Arnaud’s cross-examination, the defence sought to broaden the inquiry beyond Fenech and repeatedly questioned the investigation’s treatment of former OPM chief of staff Keith Schembri and other possible lines of inquiry.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143023/crossexamination_of_arnaud_to_resume_as_yorgen_fenech_murder_trial_enters_sixth_day"}, {"day": 7, "date": "8 July 2026", "title": "Crime-scene evidence shown to jurors", "tags": ["Forensics", "Crime scene", "Keith Arnaud"], "summary": "Arnaud’s cross-examination concluded and jurors began hearing evidence from police and forensic witnesses. Graphic crime-scene photographs prompted an emotional reaction from Daphne Caruana Galizia’s sister.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143039/yorgen_fenech_trial_enters_seventh_day_as_defence_intensifies_focus_on_keith_schembri1"}, {"day": 8, "date": "9 July 2026", "title": "Eyewitness and Dutch forensic experts testify", "tags": ["Forensics", "Eyewitness"], "summary": "Dutch experts appeared by video link and Maltese witnesses reconstructed the blast and its aftermath. An eyewitness recalled hearing a scream immediately before the explosion.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143050/yorgen_fenech_murder_trial_enters_eighth_day_as_more_forensic_evidence_expected"}, {"day": 9, "date": "10 July 2026", "title": "Medical and explosives evidence details the force of the bomb", "tags": ["Forensics", "TNT", "Medical evidence"], "summary": "Forensic and medical witnesses described the condition of the victim’s remains, the recovery of evidence and chemical tests indicating TNT at the scene. The testimony emphasised the destructive force of the explosion.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143076/yorgen_fenech_jury_trial_more_forensic_experts_expected_to_testify"}, {"day": 10, "date": "11 July 2026", "title": "Defence seeks Schembri phone data and unredacted emails", "tags": ["Digital evidence", "Keith Schembri", "Defence"], "summary": "The trial shifted to the digital reconstruction of the journalist’s devices and accounts. The defence requested multiple forensic extractions and call profiles, including data linked to Keith Schembri, Kenneth Camilleri, Johann Cremona and Melvin Theuma.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143092/yorgen_fenech_jury_trial_fbi_set_to_testify_over_role_in_investigation"}, {"day": 11, "date": "13 July 2026", "title": "Vince Muscat describes planning and execution", "tags": ["Vince Muscat", "Hitmen", "Chris Cardona"], "summary": "Convicted participant Vince Muscat, il-Koħħu, gave a detailed account of surveillance, preparations and the 2017 assassination. He also alleged that Alfred Degiorgio spoke of obtaining investigation information from former minister Chris Cardona.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143124/yorgen_fenech_jury_trial_more_witnesses_to_testify_as_caruana_galizia_murder_proceedings_resume"}, {"day": 12, "date": "14 July 2026", "title": "Muscat continues under cross-examination", "tags": ["Vince Muscat", "Cross-examination"], "summary": "Muscat continued describing the alleged murder operation and was challenged by the defence on inconsistencies, earlier statements, the abandoned 2015 plan and his dealings with the Degiorgio brothers.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143147/vince_muscat_ilkou_to_continue_testifying_as_yorgen_fenech_murder_trial_enters_day_121"}, {"day": 13, "date": "15 July 2026", "title": "Degiorgio implicates Cardona, Schembri and David Gatt", "tags": ["George Degiorgio", "Chris Cardona", "Keith Schembri", "David Gatt"], "summary": "George Degiorgio alleged that an earlier plan to kill Caruana Galizia had involved Chris Cardona and David Gatt and claimed pardon discussions stopped when he said he would name Cardona and Schembri. Alfred Degiorgio refused to answer and was re-arrested.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143173/yorgen_fenech_trial_new_witnesses_set_to_take_the_stand_as_yorgen_fenech_jury_enters_day_131"}, {"day": 14, "date": "16 July 2026", "title": "Defence attacks Theuma’s credibility through financial evidence", "tags": ["Melvin Theuma", "Money", "Cross-examination"], "summary": "The defence questioned investigators about Theuma’s undeclared wealth, property holdings, illegal gambling activity and more than €790,000 in recovered cash, seeking to portray the pardoned middleman as unreliable.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143206/yorgen_fenech_jury_trial_heads_into_third_week_after_explosive_testimony_from_degiorgio_brothers1"}, {"day": 15, "date": "17 July 2026", "title": "Cash pipeline and bomb capacity examined", "tags": ["Money", "Forensics", "TNT"], "summary": "Witnesses described cash delivered to the families of the convicted hitmen while they were in custody and other unexplained cash movements. Expert evidence stated that the explosive device was more than capable of killing its target.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143232/yorgen_fenech_trial_more_prosecution_witnesses_set_to_take_the_stand"}, {"day": 16, "date": "18 July 2026", "title": "Edgar Brincat describes Theuma’s fear and erratic behaviour", "tags": ["Edgar Brincat", "Melvin Theuma"], "summary": "Theuma’s long-time confidant Edgar Brincat, il-Ġojja, described the middleman’s panic after the murder, conversations about the plot and thoughts of confronting Keith Schembri. Fenech continued to deny commissioning the crime.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143259/yorgen_fenech_trial_former_police_commissioner_lawrence_cutajar_and_edgar_brincat_are_scheduled_to_take_the_witness_stand1"}, {"day": 17, "date": "20 July 2026", "title": "Former commissioner rejects corruption and leak allegations", "tags": ["Lawrence Cutajar", "Police", "Melvin Theuma"], "summary": "Former police commissioner Lawrence Cutajar denied leaking information, discussing the murder inquiry with Keith Schembri or lying about his contacts. He was questioned at length about Theuma’s presidential pardon and meetings at Castille.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143301/yorgen_fenech_jury_trial_melvin_theuma_confidante_edgar_brincat_to_continue_testifying_1"}, {"day": 18, "date": "21 July 2026", "title": "Johann Cremona questioned about Theuma and Castille contacts", "tags": ["Johann Cremona", "Melvin Theuma", "Keith Schembri"], "summary": "Businessman Johann Cremona described his relationship with Theuma, communications with figures linked to the Office of the Prime Minister and the context of secretly recorded conversations. The defence pressed him on his memory and motives.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143329/johann_cremona_takes_the_stand_as_yorgen_fenechs_trial_enters_its_18th_day"}, {"day": 19, "date": "22 July 2026", "title": "Secret recordings dominate amid power cuts", "tags": ["Johann Cremona", "Recordings", "Melvin Theuma"], "summary": "Hours of recordings between Cremona and Theuma were played. Jurors heard remarks about responsibility, pressure and what would happen if people implicated in the case were brought down. Power outages repeatedly interrupted proceedings.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143359/yorgen_fenech_jury_trial_enters_day_19_as_johann_cremona_expected_to_continue_testifying1"}, {"day": 20, "date": "23 July 2026", "title": "Theuma allegedly warned Fenech would face lifelong blackmail", "tags": ["Johann Cremona", "Melvin Theuma", "Degiorgio brothers"], "summary": "Cremona continued explaining recordings in which Theuma allegedly said the Degiorgio brothers would blackmail Fenech for the rest of his life. The court examined the meaning and context of multiple recorded remarks.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143378/yorgen_fenech_jury_trial_day_20_johann_cremona_resumes_on_thursday_"}, {"day": 21, "date": "24 July 2026", "title": "Cremona alleges defence contact with Schembri", "tags": ["Johann Cremona", "Kenneth Camilleri", "Keith Schembri"], "summary": "Proceedings were disrupted when Cremona alleged improper communication between Fenech’s lawyers and Keith Schembri. Kenneth Camilleri later testified that Schembri sent him to meet Theuma and subsequently distanced himself.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143393/yorgen_fenech_trial_johann_cremona_to_face_another_day_of_crossexamination_"}, {"day": 22, "date": "25 July 2026", "title": "Castille search video and ‘DCG’ documents shown", "tags": ["Keith Schembri", "Search", "Documents"], "summary": "Jurors watched footage of the 2019 search of Schembri’s Castille office. Investigators removed files and displayed a handwritten document containing references including ‘DCG’ and ‘arrest’.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143420/yorgen_fenech_trial_new_slate_of_witnesses_called_as_trial_enters_22nd_day"}, {"day": 23, "date": "27 July 2026", "title": "Police seized only devices indicated by Schembri", "tags": ["Keith Schembri", "Police search", "Electronic devices"], "summary": "Officers testified that they were instructed to collect only electronic devices handed over or pointed out by Schembri during the search of his home. Other visible phones were not seized because they had not been indicated.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143457/yorgen_fenech_trial_new_slate_of_witnesses_set_to_testify_as_jury_enters_new_week1"}, {"day": 24, "date": "28 July 2026", "title": "Schembri testifies; confrontation with Cremona", "tags": ["Keith Schembri", "Johann Cremona", "Bribery allegation"], "summary": "Schembri began his long-awaited testimony, denying leaks and involvement while recounting his relationship with Fenech and Theuma. He alleged Cremona had been offered money to testify favourably; a direct confrontation followed and Cremona became distressed.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143475/yorgen_fenech_trial_day_24_court_to_hear_further_witnesses2"}, {"day": 25, "date": "29 July 2026", "title": "Schembri says Fenech hinted at involvement", "tags": ["Keith Schembri", "Yorgen Fenech"], "summary": "Schembri testified that, during a private conversation, Fenech said words he interpreted as implying involvement in the assassination. He denied leaking investigation information, doing business with Fenech or directing anyone to calm Theuma.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143506/yorgen_fenech_trial_resumes_after_schembris_bribery_claims_upend_proceedings1"}, {"day": 26, "date": "30 July 2026", "title": "Schembri denies murder links and finishes testimony", "tags": ["Keith Schembri", "Cross-examination", "Europol"], "summary": "After brief Europol evidence, Schembri faced extensive cross-examination. He rejected allegations by Theuma, Camilleri, Cremona, Degiorgio and David Gatt; disputed evidence about his missing phone and documents; and said he did not know whether he had lied to police. The court ordered an investigation after he claimed an employee approached him.", "url": "https://www.maltatoday.com.mt/news/court_and_police/143521/yorgen_fenech_jury_trial_keith_schembri_faces_crossexamination_as_third_day_of_testimony_begins1"}];
+const timeline=document.getElementById('timeline'), search=document.getElementById('search'), filter=document.getElementById('filter');
+const allTags=[...new Set(days.flatMap(d=>d.tags))].sort();
+allTags.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;filter.appendChild(o)});
+function render(){
+ const q=search.value.toLowerCase().trim(), f=filter.value;
+ const result=days.filter(d=>(!f||d.tags.includes(f))&&(!q||JSON.stringify(d).toLowerCase().includes(q)));
+ timeline.innerHTML=result.length?result.map(d=>`
+ <article class="card">
+  <div class="dayrow"><div><div class="daynum">Day ${d.day}</div><h2>${d.title}</h2></div><div class="date">${d.date}</div></div>
+  <p class="summary">${d.summary}</p>
+  <div class="tags">${d.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+  <a class="source" href="${d.url}" target="_blank" rel="noopener">Read the MaltaToday report →</a>
+ </article>`).join(''):`<div class="empty">No timeline entries match your search.</div>`;
+}
+search.addEventListener('input',render); filter.addEventListener('change',render); render();
+
+const people=[
+{id:"daphne",name:"Daphne Caruana Galizia",role:"Murder victim and journalist",days:"1–26",x:540,y:330,central:true,desc:"The trial concerns the 16 October 2017 assassination of journalist Daphne Caruana Galizia."},
+{id:"fenech",name:"Yorgen Fenech",role:"Accused; pleaded not guilty",days:"1–26",x:540,y:115,central:true,desc:"The accused in the jury trial. MaltaToday reported his continuing denial that he commissioned the assassination."},
+{id:"schembri",name:"Keith Schembri",role:"Former OPM chief of staff; witness",days:"6–7, 10, 13, 16–18, 21–26",x:795,y:185,desc:"A recurring figure in the investigation and defence questioning. He testified over Days 24–26 and denied murder links and leaking information."},
+{id:"theuma",name:"Melvin Theuma",role:"Pardoned middleman",days:"3–6, 10, 14, 16–21",x:285,y:185,desc:"The pardoned middleman whose recordings and accounts became central to the prosecution evidence and many cross-examinations."},
+{id:"arnaud",name:"Keith Arnaud",role:"Lead police investigator",days:"3–7",x:850,y:365,desc:"Lead investigator who reconstructed the police inquiry and was extensively cross-examined."},
+{id:"cremona",name:"Johann Cremona",role:"Businessman and witness",days:"18–21, 24",x:270,y:335,desc:"A former associate/confidant in Theuma's circle who explained secret recordings and later clashed with Schembri's account."},
+{id:"camilleri",name:"Kenneth Camilleri",role:"Former security official; witness",days:"10, 21",x:800,y:490,desc:"Testified that Schembri sent him to meet Theuma; his evidence was disputed by Schembri."},
+{id:"brincat",name:"Edgar Brincat",role:"Theuma confidant; witness",days:"16–17",x:235,y:500,desc:"A long-time confidant of Theuma who described his fear and conduct following the murder."},
+{id:"vince",name:"Vince Muscat",role:"Convicted participant; witness",days:"11–12",x:395,y:570,desc:"Convicted participant who testified about surveillance, preparations and the assassination."},
+{id:"george",name:"George Degiorgio",role:"Convicted hitman; witness",days:"11–15, 20",x:555,y:585,desc:"Convicted hitman who gave evidence and made allegations involving other public figures."},
+{id:"alfred",name:"Alfred Degiorgio",role:"Convicted hitman",days:"11–15, 20",x:675,y:565,desc:"Convicted hitman and brother of George Degiorgio. MaltaToday reported that he refused to answer questions on Day 13 and was re-arrested."},
+{id:"cardona",name:"Chris Cardona",role:"Former minister; named in testimony",days:"11, 13",x:945,y:550,desc:"Named in allegations by witnesses concerning an earlier alleged murder plan and information about the investigation. Those allegations were not presented here as judicial findings."},
+{id:"gatt",name:"David Gatt",role:"Lawyer; named in testimony",days:"13, 26",x:980,y:300,desc:"Named in allegations during the trial; Schembri rejected claims linked to him."},
+{id:"cutajar",name:"Lawrence Cutajar",role:"Former police commissioner; witness",days:"17",x:90,y:370,desc:"Denied corruption, leaks and improper discussion of the murder inquiry when he testified."},
+{id:"vella",name:"Adrian Vella",role:"Doctor; linked documents examined",days:"4–5",x:150,y:215,desc:"His name appeared in evidence concerning documents and communications examined after Fenech's arrest."}
+];
+
+const links=[
+{a:"fenech",b:"schembri",type:"mixed",w:7,label:"Reported close friendship and association, followed by sharply conflicting testimony",days:"6–7, 21, 24–26",detail:"MaltaToday repeatedly described a close prior relationship. During the trial, Schembri gave evidence adverse to Fenech, while the defence challenged Schembri's credibility. The map therefore draws both a strong green base and a red dashed overlay."},
+{a:"fenech",b:"theuma",type:"negative",w:7,label:"Alleged commissioner–middleman relationship; later conflict",days:"3–6, 14, 16–21",detail:"The prosecution case described Theuma as the middleman between Fenech and the hitmen. Fenech denied commissioning the murder and the defence attacked Theuma's credibility."},
+{a:"theuma",b:"cremona",type:"positive",w:5,label:"Reported confidants and close associates",days:"18–21",detail:"Cremona described extensive conversations with Theuma and explained their secret recordings."},
+{a:"theuma",b:"brincat",type:"positive",w:6,label:"Long-time confidants",days:"16–17",detail:"Brincat was described as a long-time confidant and recounted Theuma's fear and behaviour."},
+{a:"schembri",b:"camilleri",type:"positive",w:5,label:"Reported trusted association and alleged emissary role",days:"21, 26",detail:"Camilleri testified that Schembri sent him to meet Theuma. Schembri disputed or rejected aspects of this account."},
+{a:"schembri",b:"cremona",type:"negative",w:5,label:"Conflicting accounts and bribery allegation",days:"21, 24",detail:"Cremona alleged improper contact involving Schembri, while Schembri later alleged Cremona had been offered money to testify favourably. The claims were disputed."},
+{a:"schembri",b:"theuma",type:"negative",w:6,label:"Adverse allegations and denials",days:"4–6, 16–21, 26",detail:"Theuma's recordings and accounts repeatedly referred to Schembri. Schembri denied directing anyone to calm Theuma or leaking information."},
+{a:"george",b:"alfred",type:"positive",w:8,label:"Brothers and operational associates",days:"11–15, 20",detail:"The Degiorgio brothers were jointly implicated and convicted in the murder operation. Green denotes close association, not moral approval."},
+{a:"vince",b:"george",type:"positive",w:6,label:"Operational associates in the murder",days:"11–12",detail:"Muscat testified that he operated with the Degiorgio brothers in surveillance and execution of the assassination."},
+{a:"vince",b:"alfred",type:"positive",w:6,label:"Operational associates in the murder",days:"11–12",detail:"Muscat described Alfred Degiorgio as part of the same operational group."},
+{a:"daphne",b:"fenech",type:"negative",w:8,label:"Victim and accused",days:"1–26",detail:"The prosecution alleged Fenech commissioned the assassination; Fenech pleaded not guilty and denied the allegation."},
+{a:"daphne",b:"george",type:"negative",w:8,label:"Victim and convicted hitman",days:"11–15",detail:"George Degiorgio was convicted for participation in the assassination."},
+{a:"daphne",b:"alfred",type:"negative",w:8,label:"Victim and convicted hitman",days:"11–15",detail:"Alfred Degiorgio was convicted for participation in the assassination."},
+{a:"daphne",b:"vince",type:"negative",w:7,label:"Victim and convicted participant",days:"11–12",detail:"Vince Muscat was convicted for participation and testified in the jury trial."},
+{a:"daphne",b:"schembri",type:"negative",w:3,label:"Adverse allegations and contested investigative link",days:"6–7, 13, 21–26",detail:"Schembri was repeatedly named in testimony and defence questioning. He denied involvement in the murder."},
+{a:"george",b:"cardona",type:"negative",w:4,label:"Adverse allegation concerning an earlier alleged plot",days:"13",detail:"George Degiorgio alleged Cardona's involvement in an earlier plan. This remained an allegation in the reported testimony."},
+{a:"george",b:"gatt",type:"negative",w:4,label:"Adverse allegation concerning an earlier alleged plot",days:"13",detail:"George Degiorgio alleged Gatt's involvement in an earlier plan. This remained an allegation in the reported testimony."},
+{a:"cardona",b:"gatt",type:"negative",w:3,label:"Jointly named in a contested allegation",days:"13",detail:"Both were named together in Degiorgio's account of an earlier alleged plot."},
+{a:"arnaud",b:"fenech",type:"official",w:3,label:"Lead investigator and accused",days:"3–7",detail:"Arnaud led the police investigation and testified about Fenech's arrest, statements and evidence."},
+{a:"arnaud",b:"schembri",type:"official",w:2,label:"Investigator and person examined in inquiry",days:"3–7",detail:"Arnaud was questioned about how police investigated Schembri and other potential lines of inquiry."},
+{a:"cutajar",b:"theuma",type:"official",w:2,label:"Contact examined around pardon and police handling",days:"17",detail:"Cutajar was questioned about contacts and the handling of Theuma's pardon; he denied wrongdoing."},
+{a:"vella",b:"fenech",type:"positive",w:2,label:"Personal/medical association reflected in seized material",days:"4–5",detail:"Documents and communications linked to Dr Adrian Vella were examined after Fenech's arrest."},
+{a:"vella",b:"schembri",type:"positive",w:2,label:"Association reflected in documents examined by police",days:"4–5",detail:"MaltaToday reported documents linked to both Vella and Schembri in the post-arrest investigation."},
+{a:"camilleri",b:"theuma",type:"official",w:3,label:"Meeting allegedly arranged through Schembri",days:"21",detail:"Camilleri testified that he met Theuma after being sent by Schembri."},
+{a:"schembri",b:"gatt",type:"negative",w:3,label:"Claims linked in testimony; denied by Schembri",days:"13, 26",detail:"Gatt was named in adverse testimony, while Schembri rejected claims connecting him to the murder."}
+];
+
+(function buildNetwork(){
+ const svg=document.getElementById("networkSvg"), detail=document.getElementById("networkDetail"), idx=document.getElementById("peopleIndex");
+ const NS="http://www.w3.org/2000/svg";
+ const original=people.map(p=>({id:p.id,x:p.x,y:p.y}));
+ const color={positive:"#08783e",negative:"#b3152b",official:"#7b8794"};
+ let selected=null, dragging=null, offset={x:0,y:0};
+
+ const edgeLayer=document.createElementNS(NS,"g"), nodeLayer=document.createElementNS(NS,"g");
+ svg.append(edgeLayer,nodeLayer);
+
+ function edgeStyle(l){
+   return {stroke:color[l.type]||"#08783e", dash:l.type==="official"?"8 6":"", opacity:l.type==="official"?.75:.82};
+ }
+ function draw(){
+   edgeLayer.innerHTML=""; nodeLayer.innerHTML="";
+   links.forEach((l,i)=>{
+     const a=people.find(p=>p.id===l.a), b=people.find(p=>p.id===l.b);
+     const selectedEdge=selected && (selected===l.a||selected===l.b);
+     const line=document.createElementNS(NS,"line");
+     const s=edgeStyle(l);
+     line.setAttribute("x1",a.x);line.setAttribute("y1",a.y);line.setAttribute("x2",b.x);line.setAttribute("y2",b.y);
+     line.setAttribute("stroke",s.stroke);line.setAttribute("stroke-width",l.w);line.setAttribute("stroke-linecap","round");
+     if(s.dash)line.setAttribute("stroke-dasharray",s.dash);
+     line.setAttribute("opacity",selected? (selectedEdge?1:.10):s.opacity);
+     line.classList.add("net-edge");
+     line.addEventListener("click",ev=>{ev.stopPropagation();showLink(l);});
+     edgeLayer.appendChild(line);
+     if(l.type==="mixed"){
+       const over=line.cloneNode();
+       over.setAttribute("stroke","#b3152b");over.setAttribute("stroke-width","3");over.setAttribute("stroke-dasharray","9 8");
+       over.setAttribute("opacity",selected? (selectedEdge?1:.08):.95);
+       over.addEventListener("click",ev=>{ev.stopPropagation();showLink(l);});
+       edgeLayer.appendChild(over);
+     }
+   });
+   people.forEach(p=>{
+     const g=document.createElementNS(NS,"g");g.classList.add("net-node");g.dataset.id=p.id;
+     if(selected===p.id)g.classList.add("active");
+     const c=document.createElementNS(NS,"circle");
+     c.setAttribute("cx",p.x);c.setAttribute("cy",p.y);c.setAttribute("r",p.central?34:25);
+     c.setAttribute("fill",p.id==="daphne"?"#f5e9ec":p.id==="fenech"?"#efe7da":"#fff");
+     c.setAttribute("stroke",p.id==="daphne"?"#9e1b32":p.id==="fenech"?"#6f512f":"#52606d");
+     c.setAttribute("stroke-width",selected===p.id?5:3);
+     const t=document.createElementNS(NS,"text");t.setAttribute("x",p.x);t.setAttribute("y",p.y+(p.central?50:40));t.setAttribute("text-anchor","middle");
+     const parts=p.name.split(" "); if(parts.length>2){
+       const t1=document.createElementNS(NS,"tspan");t1.setAttribute("x",p.x);t1.setAttribute("dy","0");t1.textContent=parts.slice(0,-1).join(" ");
+       const t2=document.createElementNS(NS,"tspan");t2.setAttribute("x",p.x);t2.setAttribute("dy","14");t2.textContent=parts.at(-1);
+       t.append(t1,t2);
+     } else t.textContent=p.name;
+     g.append(c,t);
+     g.addEventListener("click",ev=>{ev.stopPropagation();selectPerson(p.id);});
+     g.addEventListener("pointerdown",ev=>{dragging=p;offset={x:ev.offsetX-p.x,y:ev.offsetY-p.y};svg.setPointerCapture(ev.pointerId);});
+     nodeLayer.appendChild(g);
+   });
+ }
+ function selectPerson(id){
+   selected=id;draw();const p=people.find(x=>x.id===id);
+   const related=links.filter(l=>l.a===id||l.b===id);
+   detail.innerHTML=`<button class="close" id="closeDetail" aria-label="Close">×</button><div class="role">${p.role}</div><h4>${p.name}</h4><p>${p.desc}</p><p><strong>Relevant days:</strong> ${p.days}</p><p><strong>Mapped links:</strong> ${related.length}</p>`;
+   detail.querySelector(".close").onclick=()=>{selected=null;draw();defaultDetail()};
+ }
+ function showLink(l){
+   selected=null;draw();
+   const a=people.find(p=>p.id===l.a),b=people.find(p=>p.id===l.b);
+   const kind=l.type==="positive"?"Reported closeness/association":l.type==="negative"?"Conflict/adverse allegation":l.type==="mixed"?"Close association followed by conflict":"Official/investigative contact";
+   detail.innerHTML=`<button class="close" id="closeDetail" aria-label="Close">×</button><div class="role">${kind}</div><h4>${a.name} ↔ ${b.name}</h4><p><strong>${l.label}</strong></p><p>${l.detail}</p><p><strong>Relevant days:</strong> ${l.days}</p>`;
+   detail.querySelector(".close").onclick=defaultDetail;
+ }
+ function defaultDetail(){
+   selected=null;draw();
+   detail.innerHTML='<button class="close" id="closeDetail" aria-label="Close">×</button><div class="role">Interactive map</div><h4>Select a person or line</h4><p>The panel will explain the reported relationship and identify the most relevant trial days.</p>';
+   detail.querySelector(".close").onclick=()=>detail.style.display="none";
+   detail.style.display="";
+ }
+ svg.addEventListener("pointermove",ev=>{
+   if(!dragging)return; const rect=svg.getBoundingClientRect();
+   dragging.x=Math.max(35,Math.min(1045,(ev.clientX-rect.left)*1080/rect.width-offset.x));
+   dragging.y=Math.max(35,Math.min(645,(ev.clientY-rect.top)*680/rect.height-offset.y));draw();
+ });
+ svg.addEventListener("pointerup",()=>dragging=null);
+ svg.addEventListener("pointercancel",()=>dragging=null);
+ svg.addEventListener("click",()=>{selected=null;draw();});
+ document.getElementById("resetNetwork").onclick=()=>{original.forEach(o=>{const p=people.find(x=>x.id===o.id);p.x=o.x;p.y=o.y});selected=null;draw();defaultDetail()};
+ document.getElementById("showAllNetwork").onclick=()=>{selected=null;draw();defaultDetail()};
+ document.getElementById("closeDetail").onclick=()=>detail.style.display="none";
+ people.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{
+   const btn=document.createElement("button");btn.className="person-chip";btn.innerHTML=`<b>${p.name}</b><small>${p.role}</small>`;
+   btn.onclick=()=>{selectPerson(p.id);document.getElementById("people-network").scrollIntoView({behavior:"smooth",block:"start"})};idx.appendChild(btn);
+ });
+ draw();
+})();
+
 </script>
-</body>
-</html>
+</body></html>
