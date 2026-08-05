@@ -16,6 +16,7 @@
 - Log the source URL, byline, publication/update time and verification notes under `sources/YYYY-MM-DD.md`.
 - Keep the latest dashboard, counts, court-day range and footer synchronized.
 - Update the daily infographic with 3–5 exact, sourced takeaways. Prefer concrete counts, sequences, evidence categories or rulings. Do not invent scores or imply guilt.
+- Publish a separate Daily Visual edition for every new court day. Rotate the subject materially—people dossier, evidence map, quote anatomy, timeline, courtroom explainer, curiosity, ruling or communications network—and choose a professional visual/interactive treatment that fits the subject. Preserve previous editions and link the underlying report.
 
 ## Relationship cloud
 
@@ -28,10 +29,10 @@
 
 ## Images
 
-- Use only correctly identified images with a clear reuse licence or explicit permission.
-- Record the creator, licence and source page in `assets/people/LICENSES.md` and the profile panel.
-- Do not copy publisher photographs when their terms prohibit reproduction.
-- Use initials when no safe, verified portrait is available.
+- Use only correctly identified images. A published photograph requires a clear reuse licence or explicit permission.
+- An original AI editorial illustration may be created from a visually verified identity reference, but it must use a new pose, clothing, composition and background and be clearly labelled as an illustration—not a photograph.
+- Record the creator/workflow and reference source in `assets/people/LICENSES.md` and the profile panel. Do not publish the identity-reference file.
+- Do not copy publisher photographs when their terms prohibit reproduction. Use initials when identity cannot be safely verified.
 
 ## Validation
 
@@ -39,5 +40,4 @@
 - Day numbers and source URLs are unique and chronological.
 - Every relationship endpoint resolves to a person node.
 - New links use MaltaToday HTTPS URLs.
-- The Latest, Relationships and Timeline views work at desktop and phone widths.
-
+- The Latest, Daily Visual, Relationships and Timeline views work at desktop and phone widths, and every Daily Visual control is keyboard accessible.
