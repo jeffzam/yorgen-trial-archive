@@ -1,6 +1,6 @@
 # Yorgen Fenech trial archive
 
-A source-linked reading guide to MaltaToday’s reporting on the Yorgen Fenech jury trial. The public site presents:
+A source-linked reading guide to reporting by MaltaToday, Times of Malta, The Malta Independent and TVM News on the Yorgen Fenech jury trial. The public site presents:
 
 - a concise latest-sitting dashboard;
 - a compact daily mobile-friendly infographic;
@@ -18,4 +18,4 @@ The site is an independent journalistic synthesis, not a court record or judicia
 - `sources/` — dated verification logs for each update day.
 - `MAINTENANCE.md` — editorial, relationship and publishing rules.
 
-The archive is checked hourly from 09:00 through 19:00 Malta time. A new commit is made only when MaltaToday has published a substantive change.
+The archive is checked on its scheduled maintenance run. A new trial commit is made only when one of the permitted local outlets has published a substantive change; a completed four-portrait batch is independently substantive.

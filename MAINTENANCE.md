@@ -2,12 +2,13 @@
 
 ## Source and legal framing
 
-1. Use MaltaToday’s court reporting as the factual source for trial updates.
+1. Search and cross-check MaltaToday, Times of Malta, The Malta Independent and TVM News. Use official material where available for consequential claims.
 2. Read the full report; never rely on a search snippet or social-media paraphrase.
 3. Attribute testimony, allegations, denials, evidence descriptions and judicial rulings precisely.
 4. Preserve the presumption of innocence and the accused’s not-guilty plea.
 5. Use short quotations only, with the speaker and courtroom context.
-6. If nothing materially new has been reported, make no file change and no commit.
+6. Record outlet, URL, byline and publication/update time for every article used. If accounts differ, attribute each version and do not silently reconcile them.
+7. If nothing materially new has been reported, make no trial-content change and no no-op trial commit.
 
 ## Hourly update pattern
 
@@ -39,5 +40,5 @@
 - JavaScript parses without errors.
 - Day numbers and source URLs are unique and chronological.
 - Every relationship endpoint resolves to a person node.
-- New links use MaltaToday HTTPS URLs.
+- New source links use HTTPS URLs from the permitted local outlets or official material.
 - The Latest, Daily Visual, Relationships and Timeline views work at desktop and phone widths, and every Daily Visual control is keyboard accessible.
