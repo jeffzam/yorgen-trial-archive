@@ -42,3 +42,10 @@
 - Every relationship endpoint resolves to a person node.
 - New source links use HTTPS URLs from the permitted local outlets or official material.
 - The Latest, Daily Visual, Relationships and Timeline views work at desktop and phone widths, and every Daily Visual control is keyboard accessible.
+
+## Publishing
+
+- The maintenance automation runs daily at 19:00 Europe/Malta and pushes only substantive archive or completed portrait-batch changes to `main`.
+- `.github/workflows/deploy-pages.yml` publishes every `main` push through GitHub Actions. The repository's Pages source must remain set to **GitHub Actions**, not **Deploy from a branch**.
+- The deployment concurrency group cancels a superseded run so only the newest revision can remain queued or active. A deployment also times out after 10 minutes rather than remaining indefinitely stuck.
+- Use the workflow's manual dispatch for a controlled retry. Do not create empty retry commits.
