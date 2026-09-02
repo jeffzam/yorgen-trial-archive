@@ -18,4 +18,4 @@ The site is an independent journalistic synthesis, not a court record or judicia
 - `sources/` — dated verification logs for each update day.
 - `MAINTENANCE.md` — editorial, relationship and publishing rules.
 
-The archive is checked on its scheduled maintenance run. A new trial commit is made only when one of the permitted local outlets has published a substantive change; a completed four-portrait batch is independently substantive.
+The daily trial archive closed with the jury verdicts on 2 September 2026. Scheduled maintenance is paused; any later update requires the archive owner to reactivate it explicitly. The historical source, attribution and legal-framing rules remain in force.

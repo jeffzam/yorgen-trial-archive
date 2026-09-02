@@ -45,7 +45,7 @@
 
 ## Publishing
 
-- The maintenance automation runs daily at 19:00 Europe/Malta and pushes only substantive archive or completed portrait-batch changes to `main`.
+- The maintenance automation formerly ran daily at 19:00 Europe/Malta. It was paused after publication of the final verdict edition on 2 September 2026 and must not resume without the archive owner’s explicit instruction.
 - `.github/workflows/deploy-pages.yml` publishes every `main` push through GitHub Actions. The repository's Pages source must remain set to **GitHub Actions**, not **Deploy from a branch**.
 - The deployment concurrency group cancels a superseded run so only the newest revision can remain queued or active. A deployment also times out after 10 minutes rather than remaining indefinitely stuck.
 - Use the workflow's manual dispatch for a controlled retry. Do not create empty retry commits.
